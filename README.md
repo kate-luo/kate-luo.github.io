@@ -1,2 +1,3 @@
 # kate-luo.github.io
-Personal Website
+# Kate Luo
+## Personal Website
