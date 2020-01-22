@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Kate Luo 
-description: Test descroption
+description: Test description
 ---
 
 # Introduction
