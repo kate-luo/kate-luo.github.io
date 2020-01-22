@@ -5,4 +5,4 @@ Here are some examples of visualization:
 
 
 Here are some other things:
--![Here is a picture]()
+-![Here is a picture](Star.jpg)
