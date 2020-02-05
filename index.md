@@ -4,10 +4,10 @@ title: Kate Luo
 description: This site holds some of my assignments and projects. 
 ---
 
-### Projects
+## Projects
 
 [Personal Projects](/code/index.md)
 
 
-### Machine Learning
+## Machine Learning
 [Chapter 8: Tree-Based Method](/Group_Project/index.md)
