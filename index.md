@@ -6,7 +6,7 @@ description: Test description
 
 ### Projects
 
-[Go to code folder](/code/index.md)
+[Personal Projects](/code/index.md)
 
 
 ### Machine Learning
