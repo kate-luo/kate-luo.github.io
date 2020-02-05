@@ -4,6 +4,6 @@ title: Kate Luo
 description: Test description
 ---
 
-# Introduction
+### Group Project
 
 [Go to code folder](/code/index.md)
