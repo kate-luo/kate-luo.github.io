@@ -4,6 +4,8 @@ title: Kate Luo
 description: This site holds some of my assignments and projects. 
 ---
 
+
+
 ## Projects
 
 [Personal Projects](/code/index.md)
