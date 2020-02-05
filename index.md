@@ -4,6 +4,9 @@ title: Kate Luo
 description: Test description
 ---
 
-### Group Project
+### Projects
 
 [Go to code folder](/code/index.md)
+
+
+### Machine Learning
