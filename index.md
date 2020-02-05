@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Kate Luo 
-description: Test description
+description: This site holds some of my assignments and projects. 
 ---
 
 ### Projects
