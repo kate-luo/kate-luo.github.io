@@ -1,8 +1,7 @@
 ---
 layout: default
 title: Kate Luo 
-description: Business Analyst
-This site holds some of my assignments and projects. 
+description: This site holds some of my assignments and projects. 
 ---
 
 
