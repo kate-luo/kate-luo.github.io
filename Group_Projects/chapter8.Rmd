@@ -1,0 +1,250 @@
+---
+title: "Team 12"
+author: 
+- Kate Luo
+- Ian Wesley McDaniel
+- David Tabert
+- Christopher Carlevato
+date: "02/10/2020"
+output:
+  rmdformats::material:
+    theme: simplex
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+library(rmdformats)
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+```{r echo=FALSE}
+# multiple files
+xfun::embed_files(c('chapter8.Rmd', 'fittingTrees.R', 'regressionTrees.R', 'team12Applied.R'))
+
+```
+
+
+
+# 8.3.1 Fitting Classification Trees  
+
+
+#### 1. Data
+
+The `tree` library is used to construct classification and regression trees. Since Sales is a continuous variable, we have to recode and store it as a binary variable. We use the ```ifelse()``` function to create a variable, called `High`, which takes on a value of `Yes` if the `Sales` variable exceeds 8 - otherwise it takes on a value of `No`.  
+  
+  
+
+
+```{r, warning=FALSE,collapse=TRUE}
+library(tree)
+library(ISLR)
+attach(Carseats)
+head(Carseats)
+High  <- ifelse(Sales <= 8, "No", "Yes")
+head(High)
+```
+
+<br>
+To integrate this new variable, we use the ```data.frame()``` function to merge `High` with the rest of the `Carseats` data. 
+
+ 
+
+```{r, collapse=TRUE}
+Carseats <- data.frame(Carseats, High)
+head(Carseats)
+```
+  
+    
+      
+      
+
+
+<br>
+<br>
+
+#### 2. Construct Classifiction with Tree
+
+We now use the ```tree()```function to fit a classification tree in order to predict `High` using all variables but `Sales`. The syntax of the ```tree()``` function is quite similar to that of the ```lm()``` function.  
+
+  
+  
+
+```{r,collapse=TRUE}
+tree.carseats <- tree(High~.-Sales, Carseats)
+summary(tree.carseats)
+```
+
+The ```summary()``` function lists the variables that are used as internal nodes in the tree, the number of terminal (ending) nodes and the training error rate. In this case, the training error rate is 9%. The *residual mean deviance* reported is simply the deviance divided by n-|T0| (T0 refers to the number of terminal nodes), which in this case is 400-27 = 373.  
+
+<br>
+<br>
+We use the ```plot()``` function to display the tree structure and the ```text()``` function to display the nodes labels. The argument `pretty = 0` instructs `R` to include the category names for any qualitative predictors, rather than simply displaying a letter for each category.  
+
+
+```{r, fig.width = 10}
+par(bg = 'black')
+plot(tree.carseats, type = 'uniform', col = 'aquamarine')
+text(tree.carseats, pretty = 0, cex = .42, col = 'white')
+```
+
+The most important indicator of `Sales` appears to be `shelving location`, and the first branch differentiates `Good` locations (to the right) from `Bad` and `Medium` locations.  
+
+<br>
+
+```{r,results=FALSE}
+tree.carseats
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics('Tree.png')
+```
+
+If we just type the name of the tree object, `R` prints output corresponding to each branch of the tree. `R` displays the split criterion, the number of observations in that branch, the deviance and the overall prediction for the branch(`Yes` or `No`). Branches that lead to terminal nodes are indicated using asterisks. 
+
+<br>
+<br>
+
+
+#### 3. Estimate the Test Error
+
+In this step, we split the observations into a training set and a test set, build the tree using the training set and evaluate its performance on the test data. The ```predict()``` function can be used for this purpose. The argument `type = "class"` instructs `R` to return the actual class prediction. This approach leads to correct predictions for 77% of the test data set. 
+
+
+```{r,collapse=TRUE}
+set.seed(2)
+train <- sample(1:nrow(Carseats), 200)
+Carseats.test <- Carseats[-train,]
+High.test <- High[-train]
+tree.carseats <- tree(High~.-Sales, Carseats, subset = train)
+tree.pred <- predict(tree.carseats, Carseats.test, type = "class")
+table(tree.pred, High.test)
+(104+50)/200
+```
+
+<br>
+<br>
+
+#### 4. Perform Cross-validation
+
+
+```cv.tree()``` determines the optimal level of tree complexity; cost complexity pruning is used in order to select a sequence of trees for consideration. We use the argument `FUN = prune.misclass` to indicate that we want the classification error rate to guide the cross-validation and pruning process, rather than the default for the ```cv.tree()``` function, which is deviance. 
+
+```{r,collapse=TRUE}
+cv.carseats <- cv.tree(tree.carseats, FUN = prune.misclass)
+names(cv.carseats)
+cv.carseats
+```
+
+The ```cv.tree()``` function reports the number of terminal nodes of each tree considered (size) as well as the corresponding error rate and the value of the cost-complexity parameter used. 
+<br>
+`dev` corresponds to the cross-validation error rate in this instance. The tree with nine terminal nodes results in the lowest cross-validation error rate, with 66 cross-validation errors. 
+
+<br>
+
+#### 5. Cross-validation Plot and Predict
+Plot the error rate as a function of `size`
+
+```{r, fig.width = 10}
+par(bg = 'black')
+
+plot(cv.carseats$size, cv.carseats$dev, type = 'b', col = 'white', axes = FALSE, xlab = "", ylab = "")
+box(col="aquamarine")
+axis(1, col = "aquamarine", col.ticks = "aquamarine", col.axis = "white", cex.axis = 1)
+axis(2, col = "aquamarine", col.ticks = "aquamarine", col.axis = "white", cex.axis = 1)
+mtext("Nodes", side = 1, line = 3, col = "aquamarine", cex = 1)
+mtext("Deviance", side = 2, line = 3, col = "aquamarine", cex = 1)
+```
+<br>
+We now apply the `prune.misclass()` function in order to prune the tree to obtain its nine-node variant.
+```{r, fig.width = 10}
+par(bg = 'black')
+prune.carseats <- prune.misclass(tree.carseats, best = 9)
+plot(prune.carseats, type = 'uniform', col = 'aquamarine')
+text(prune.carseats, pretty = 0, cex = .75, col = 'white')
+```
+
+```{r,collapse=TRUE}
+tree.pred<- predict(prune.carseats, Carseats.test, type = "class")
+table(tree.pred, High.test)
+(97+58)/200
+```
+We then apply the ```predict()``` function - now 77.5% of the test observations are correct. The pruning process improved the classification accuracy. If we change the value of `best` to another number, however, we obtain a pruned tree with an inferior classiﬁcation accuracy. 
+
+```{r, fig.width = 10, collapse=TRUE}
+prune.carseats <- prune.misclass(tree.carseats, best = 6)
+par(bg = 'black')
+plot(prune.carseats, type = 'uniform', col = 'aquamarine')
+text(prune.carseats, pretty = 0, col = 'white')
+tree.pred <- predict(prune.carseats, Carseats.test, type = "class")
+table(tree.pred, High.test)
+(89+62)/200
+```
+
+
+# 8.3.2 Fitting Regression Trees  
+
+#### 1. Data
+We fit a regression tree to the `Boston` data set. 
+```{r, collapse=TRUE}
+library(MASS)
+set.seed(1)
+train <-  sample(1:nrow(Boston), nrow(Boston)/2)
+tree.boston <- tree(medv~., Boston, subset=train)
+summary(tree.boston)
+```
+The output of `summary()` indicates that only four of the variables have been used in constructing the tree. In the context of a regression tree, the deviance is simply the sum of squared errors for the tree.
+
+<br>
+
+#### 2. Plot the Tree
+```{r, fig.width = 10}
+par(bg = 'black')
+plot(tree.boston, type = 'uniform', col = 'aquamarine')
+text(tree.boston, pretty = 0, col = 'white')
+```
+
+The tree predicts a median house price of approximately $45,400 for larger homes (`rm > 45.38`).
+
+<br>
+
+#### 3. Cross-Validation
+
+Now we use the `cv.tree()` function to see whether pruning the tree will improve performance. 
+
+```{r, fig.width = 10}
+cv.boston <- cv.tree(tree.boston)
+par(bg = 'black')
+plot(cv.boston$size, cv.boston$dev, type= 'b', col = 'white', axes = FALSE)
+box(col="aquamarine")
+axis(1, col = "aquamarine", col.ticks = "aquamarine", col.axis = "white", cex.axis = 1)
+axis(2, col = "aquamarine", col.ticks = "aquamarine", col.axis = "white", cex.axis = 1)
+mtext("Nodes", side = 1, line = 3, col = "aquamarine", cex = 1)
+mtext("Deviance", side = 2, line = 3, col = "aquamarine", cex = 1)
+```
+In this case, the most complex tree is selected by cross-validation. However, if we wish to prune the tree, we could do so as follows, using the `prune.tree()` function. 
+
+```{r, fig.width = 10}
+prune.boston <- prune.tree(tree.boston, best = 5)
+par(bg = 'black')
+plot(prune.boston, type = 'uniform', col = 'aquamarine')
+text(prune.boston, pretty = 0, col = 'white')
+```
+
+In keeping with the cross-validation results, we use the unpruned tree to make predictions on the test set.
+```{r, fig.width = 10, collapse=TRUE}
+yhat <- predict(tree.boston, newdata = Boston[-train,])
+boston.test <- Boston[-train, "medv"]
+par(bg = 'black')
+plot(yhat, boston.test, col = 'white', axes = FALSE)
+box(col = "aquamarine")
+axis(1, col = "aquamarine", col.ticks = "aquamarine", col.axis = "white", cex.axis = 1)
+axis(2, col = "aquamarine", col.ticks = "aquamarine", col.axis = "white", cex.axis = 1)
+mtext("Y^", side = 1, line = 3, col = "aquamarine", cex = 1)
+mtext("Test", side = 2, line = 3, col = "aquamarine", cex = 1)
+abline(0, 1, col = 'white')
+mean((yhat-boston.test)^2)
+```
+
+The test set MSE associated with the regression tree is 35.29. The square root of the MSE is therefore around 5.94, indicating that this model leads to test predictions that are within $5940 of the true median home value for the suburb. 
