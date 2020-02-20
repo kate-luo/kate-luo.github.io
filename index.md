@@ -12,4 +12,4 @@ description: This site holds some of my assignments and projects.
 
 
 ## Machine Learning
-[Chapter 8: Tree-Based Method](/Group_Project/index.md)
+[Chapter 8: Tree-Based Method](/Group_Project/readme.md)
