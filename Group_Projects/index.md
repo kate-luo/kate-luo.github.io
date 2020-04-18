@@ -1,4 +1,6 @@
 # New York City Taxi Fare Prediction
+
+
 ![ ](taxi-cab-nyc.jpg)
 
 - [Download R Script](TP2_Improved.R)
