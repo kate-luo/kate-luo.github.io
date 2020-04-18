@@ -1,6 +1,5 @@
-TP2
+New York City Taxi Fare Prediction
 ![ ](taxi-cab-nyc.jpg)
 
 - [Download R Script](TP2_Improved.R)
-- [View Generated R Markdown](TP2_RMD.pdf)
-- 
+- [View Generated R Markdown](TP2_RMD.pdf) 
