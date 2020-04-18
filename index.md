@@ -8,7 +8,7 @@ description: This site holds some of my assignments and projects.
 ![ ](project.jpg)
 ## Projects
 
-[Personal Projects](/code/index.md)
+[View Projects](/code/index.md)
 
 
 ## Machine Learning
