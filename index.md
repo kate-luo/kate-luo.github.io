@@ -12,4 +12,4 @@ description: This site holds some of my assignments and projects.
 
 
 ## Machine Learning
-[Team 12: TP2](/Group_Project/index.md)
+[Team 12: TP2](/Group_Projects/index.md)
