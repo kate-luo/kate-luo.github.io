@@ -9,6 +9,7 @@
 - [Link to the Selected Notebook](https://www.kaggle.com/dster/nyc-taxi-fare-starter-kernel-simple-linear-model)
 - [Download R Script](TP2_Improved.R)
 - [View R Markdown](TP2_RMD.pdf) 
+- [View Powerpoint](TP2_Powerpoint.pdf)
 - Presentation Video
 
 [![Presentation Video](https://img.youtube.com/vi/A5okUJufFFg/0.jpg)](http://www.youtube.com/watch?v=A5okUJufFFg)
